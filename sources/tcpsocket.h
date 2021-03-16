@@ -71,11 +71,18 @@ public:
 
 #if USE_SSL
 
+	enum class SSLVerifyMethod : uint8_t
+	{
+		FullVerification,        // Let OpenSSL run all checks on the server certificate
+		DomainAndCertificate,    // Verify the domain name and certificate chain
+		AcceptSelfSigned         // Verify the domain name and certificate, accept self-signed certificates
+	};
+
 	// Setup this socket to work as a SSL server
 	bool InitializeSSLServer(const std::string& certFile, const std::string& keyFile);
 
-	// Setup this socket to work as a SSL client with a CA certificate file or direct certificate content
-	bool InitializeSSLClient(const std::string& caCertsFile = "", const std::string& caCerts = "", bool verify = true);
+	// Setup this socket to work as a SSL client with an optional explicit CA certificate file
+	bool InitializeSSLClient(SSLVerifyMethod verifyMethod = SSLVerifyMethod::FullVerification, const std::string& caCertsFile = "");
 
 #endif    // USE_SSL
 
@@ -119,8 +126,9 @@ private:
 	sockaddr_in mClientInfo;
 
 #if USE_SSL
-	SSL_CTX* mSSLContext;
-	SSL*     mSSLSession;
+	SSL_CTX*        mSSLContext;
+	SSL*            mSSLSession;
+	SSLVerifyMethod mSSLVerify;
 #endif    // USE_SSL
 
 	static int      sSocketCount;

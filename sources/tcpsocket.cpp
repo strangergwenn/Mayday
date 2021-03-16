@@ -2,6 +2,10 @@
 #include <iostream>
 #include <cassert>
 
+#if USE_SSL
+#include "certs.h"
+#endif    // USE_SSL
+
 /*-----------------------------------------------------------------------------
     Constructors & destructor
 -----------------------------------------------------------------------------*/
@@ -125,10 +129,11 @@ bool TcpSocket::InitializeSSLServer(const std::string& certFile, const std::stri
 	return true;
 }
 
-bool TcpSocket::InitializeSSLClient(const std::string& caCertsFile, const std::string& caCerts, bool verify)
+bool TcpSocket::InitializeSSLClient(SSLVerifyMethod verifyMethod, const std::string& caCertsFile)
 {
 	// Create context
 	mSSLContext = SSL_CTX_new(TLSv1_2_client_method());
+	mSSLVerify  = verifyMethod;
 	if (!mSSLContext)
 	{
 		long error = ERR_get_error();
@@ -148,10 +153,10 @@ bool TcpSocket::InitializeSSLClient(const std::string& caCertsFile, const std::s
 	}
 
 	// Load CA certificates from memory
-	else if (caCerts.length())
+	else if (CACertificateStore.length())
 	{
 		BIO* mem = BIO_new(BIO_s_mem());
-		BIO_puts(mem, caCerts.c_str());
+		BIO_puts(mem, CACertificateStore.c_str());
 
 		while (X509* cert = PEM_read_bio_X509(mem, NULL, 0, NULL))
 		{
@@ -163,55 +168,12 @@ bool TcpSocket::InitializeSSLClient(const std::string& caCertsFile, const std::s
 
 	// Set parameters
 	SSL_CTX_set_timeout(mSSLContext, 5);
-	SSL_CTX_set_verify(mSSLContext, verify ? SSL_VERIFY_PEER : SSL_VERIFY_NONE, nullptr);
+	SSL_CTX_set_verify(mSSLContext, verifyMethod == SSLVerifyMethod::FullVerification ? SSL_VERIFY_PEER : SSL_VERIFY_NONE, nullptr);
 
 	return true;
 }
 
 #endif    // USE_SSL
-//
-// static bool matches_subject_alternative_name(std::string hostname, const X509* server_cert)
-//{
-//	int i;
-//	int san_names_nb                  = -1;
-//	STACK_OF(GENERAL_NAME)* san_names = NULL;
-//
-//	// Try to extract the names within the SAN extension from the certificate
-//	san_names = X509_get_ext_d2i((X509*) server_cert, NID_subject_alt_name, NULL, NULL);
-//	if (san_names == NULL)
-//	{
-//		return false;
-//	}
-//	san_names_nb = sk_GENERAL_NAME_num(san_names);
-//
-//	// Check each name within the extension
-//	for (i = 0; i < san_names_nb; i++)
-//	{
-//		const GENERAL_NAME* current_name = sk_GENERAL_NAME_value(san_names, i);
-//
-//		if (current_name->type == GEN_DNS)
-//		{
-//			// Current name is a DNS name, let's check it
-//			char* dns_name = (char*) ASN1_STRING_data(current_name->d.dNSName);
-//
-//			// Make sure there isn't an embedded NUL character in the DNS name
-//			if (ASN1_STRING_length(current_name->d.dNSName) != strlen(dns_name))
-//			{
-//				return false;
-//			}
-//			else
-//			{    // Compare expected hostname with the DNS name
-//				if (hostname == dns_name)
-//				{
-//					return true;
-//				}
-//			}
-//		}
-//	}
-//	sk_GENERAL_NAME_pop_free(san_names, GENERAL_NAME_free);
-//
-//	return false;
-//}
 
 bool TcpSocket::Connect(const std::string& domain, uint16_t port)
 {
@@ -270,17 +232,21 @@ bool TcpSocket::Connect(const std::string& domain, uint16_t port)
 			long error = ERR_get_error();
 			std::cout << "TcpSocket::Connect : failed to connect : " << ERR_error_string(error, nullptr) << std::endl;
 
-			SSL_free(mSSLSession);
-			mSSLSession = nullptr;
+			Close();
 
 			return false;
 		}
 
 		// Verify
 		int err = SSL_get_verify_result(mSSLSession);
-		if (err != X509_V_OK && err != X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN)
+		if (err == X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN && mSSLVerify == SSLVerifyMethod::AcceptSelfSigned)
+		{
+			// Ignore error
+		}
+		else if (err != X509_V_OK)
 		{
 			std::cout << "TcpSocket::Connect : found a certificate error : " << X509_verify_cert_error_string(err) << std::endl;
+			Close();
 			return false;
 		}
 
@@ -289,6 +255,7 @@ bool TcpSocket::Connect(const std::string& domain, uint16_t port)
 		if (serverCert == nullptr)
 		{
 			std::cout << "TcpSocket::Connect : no certificate on server" << std::endl;
+			Close();
 			return false;
 		}
 

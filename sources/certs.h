@@ -1,6 +1,8 @@
 ﻿#include <string>
 
-std::string GlobalSign =
+std::string CACertificateStore =
+
+	// GlobalSign Root CA R2
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIDujCCAqKgAwIBAgILBAAAAAABD4Ym5g0wDQYJKoZIhvcNAQEFBQAwTDEgMB4G\n"
 	"A1UECxMXR2xvYmFsU2lnbiBSb290IENBIC0gUjIxEzARBgNVBAoTCkdsb2JhbFNp\n"
@@ -22,9 +24,9 @@ std::string GlobalSign =
 	"ot+3i9DAgBkcRcAtjOj4LaR0VknFBbVPFd5uRHg5h6h+u/N5GJG79G+dwfCMNYxd\n"
 	"AfvDbbnvRG15RjF+Cv6pgsH/76tuIMRQyV+dTZsXjAzlAcmgQWpzU/qlULRuJQ/7\n"
 	"TBj0/VLZjmmx6BEP3ojY+x1J96relc8geMJgEtslQIxq/H5COEBkEveegeGTLg==\n"
-	"-----END CERTIFICATE-----\n";
+	"-----END CERTIFICATE-----\n"
 
-std::string AmazonRootCA1 =
+	// Amazon Root CA 1
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF\n"
 	"ADA5MQswCQYDVQQGEwJVUzEPMA0GA1UEChMGQW1hem9uMRkwFwYDVQQDExBBbWF6\n"
@@ -44,9 +46,9 @@ std::string AmazonRootCA1 =
 	"o/ufQJVtMVT8QtPHRh8jrdkPSHCa2XV4cdFyQzR1bldZwgJcJmApzyMZFo6IQ6XU\n"
 	"5MsI+yMRQ+hDKXJioaldXgjUkK642M4UwtBV8ob2xJNDd2ZhwLnoQdeXeGADbkpy\n"
 	"rqXRfboQnoZsG4q5WTP468SQvvG5\n"
-	"-----END CERTIFICATE-----\n";
+	"-----END CERTIFICATE-----\n"
 
-std::string ISRGRootX1 =
+	// ISRG Root X1
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw\n"
 	"TzELMAkGA1UEBhMCVVMxKTAnBgNVBAoTIEludGVybmV0IFNlY3VyaXR5IFJlc2Vh\n"
@@ -77,9 +79,9 @@ std::string ISRGRootX1 =
 	"4RgqsahDYVvTH9w7jXbyLeiNdd8XM2w9U/t7y0Ff/9yi0GE44Za4rF2LN9d11TPA\n"
 	"mRGunUHBcnWEvgJBQl9nJEiU0Zsnvgc/ubhPgXRR4Xq37Z0j4r7g1SgEEzwxA57d\n"
 	"emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=\n"
-	"-----END CERTIFICATE-----\n";
+	"-----END CERTIFICATE-----\n"
 
-std::string DSTRootX3 =
+	// DST Root X3
 	"-----BEGIN CERTIFICATE-----\n"
 	"MIIDSjCCAjKgAwIBAgIQRK+wgNajJ7qJMDmGLvhAazANBgkqhkiG9w0BAQUFADA/\n"
 	"MSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\n"
