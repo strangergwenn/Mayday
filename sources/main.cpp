@@ -83,7 +83,7 @@ int main(int argc, char** argv)
 #else
 	const std::string sep         = "/";
 	const std::string appDataPath = "~/.config/Epic";
-	const std::string configDir   = "LinuxNoEditor;
+	const std::string configDir   = "LinuxNoEditor";
 #endif
 
 	/** Get the UNIX timestamp of a given file path */
