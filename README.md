@@ -92,4 +92,5 @@ Pull requests are welcome to improve the project. In particular, the following t
 
  - Linux support & testing
  - Add a mechanism to override config.h at configure or build time from a text file, to avoid persistent local changes
+ - Investigate the use of multipart form encoding instead of base64 to reduce bandwidth ; implies moving from std::string to a proper data type, and probably means HttpRequest should specialize into a POST-specific, multipart-specific class
  - General testing and improvements
