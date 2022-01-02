@@ -1,7 +1,7 @@
 ﻿/**
  * 'Mayday' crash reporter for Unreal Engine games
  * Check config.h for setting up the reporter for your game !
- * Gwennaël Arbona - 2021 - Deimos Games
+ * Gwennaël Arbona - 2022 - Deimos Games
  */
 
 #include "tcpsocket.h"
@@ -74,17 +74,17 @@ private:
 /** Main application code */
 int main(int argc, char** argv)
 {
-	const std::string minidumpName     = "UE4Minidump.dmp";
+	const std::string minidumpName     = "UEMinidump.dmp";
 	const std::string crashContextName = "CrashContext.runtime-xml";
 
 #if WIN32
 	const std::string sep         = "\\";
 	const std::string appDataPath = std::getenv("LOCALAPPDATA");
-	const std::string configDir   = "WindowsNoEditor";
+	const std::string configDir   = "Windows";
 #else
 	const std::string sep         = "/";
 	const std::string appDataPath = "~/.config/Epic";
-	const std::string configDir   = "LinuxNoEditor";
+	const std::string configDir   = "Linux";
 #endif
 
 	/** Get the UNIX timestamp of a given file path */
