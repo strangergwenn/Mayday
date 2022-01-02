@@ -9,11 +9,12 @@
 
 #include "zlib.h"
 
+#include <chrono>
 #include <iostream>
 #include <iomanip>
-#include <fstream>
 #include <filesystem>
-#include <chrono>
+#include <fstream>
+#include <sstream>
 
 /** Basic HTTP request class **/
 class HttpRequest : TcpSocket
